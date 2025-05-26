@@ -1,0 +1,178 @@
+﻿@model DoctorSystem.Models.ViewModels.AppointmentViewModel
+
+@{
+    ViewData["Title"] = "Create Appointment";
+}
+
+<style>
+    .doctor-card {
+        background-color: #f8f9fa;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        transition: transform 0.2s;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+        .doctor-card:hover {
+            transform: scale(1.01);
+        }
+
+    .doctor-avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    .doctor-info {
+        flex-grow: 1;
+    }
+
+    .doctor-name {
+        font-weight: bold;
+    }
+
+    .doctor-email, .doctor-specialty, .doctor-availability {
+        font-size: 0.9rem;
+        color: gray;
+    }
+
+    .appointment-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1rem;
+    }
+
+        .appointment-table th, .appointment-table td {
+            border: 1px solid #ccc;
+            padding: 0.5rem;
+            text-align: left;
+        }
+</style>
+
+<h1>Create Appointment</h1>
+
+<form asp-action="Create" method="post">
+    <div class="form-group">
+        <label>Select Doctors (Max 3)</label>
+        <div id="doctorList">
+            @for (int i = 0; i < Model.ProviderList.Count; i++)
+            {
+                var doctor = Model.ProviderList[i];
+                string avatarPath = i == 0 ? Url.Content("~/images/doctor1.jpg") :
+                i == 1 ? Url.Content("~/images/doctor2.jpg") :
+                i == 2 ? Url.Content("~/images/doctor3.jpg") :
+                i == 3 ? Url.Content("~/images/doctor4.jpg") :
+                i == 4 ? Url.Content("~/images/doctor5.jpg") :
+                i == 5 ? Url.Content("~/images/doctor6.jpg") :
+                Url.Content("~/images/default-doctor.png");
+
+                <div class="doctor-card">
+                    <img src="@avatarPath" alt="Doctor" class="doctor-avatar" />
+                    <div class="doctor-info">
+                        <div class="doctor-name">@doctor.UserName</div>
+                        <div class="doctor-email">@doctor.UserName.ToLower()@("@hospital.com")</div>
+                        <div class="doctor-specialty">Specialty: General Physician</div>
+                        <div class="doctor-availability">Available: 9:00 AM - 5:00 PM</div>
+                    </div>
+                    <label>
+                        <input type="checkbox" name="SelectedDoctors" value="@doctor.Id" class="doctor-checkbox me-2" />
+                        <span>Select</span>
+                    </label>
+                </div>
+            }
+        </div>
+        <span class="text-danger" id="doctorLimitError"></span>
+    </div>
+
+    <table class="appointment-table">
+        <tr>
+            <td><label asp-for="Department"></label></td>
+            <td>
+                <input asp-for="Department" class="form-control" />
+                <span asp-validation-for="Department" class="text-danger"></span>
+            </td>
+        </tr>
+        <tr>
+            <td><label asp-for="StartDate"></label></td>
+            <td>
+                <input asp-for="StartDate" class="form-control" type="date" id="appointmentDate" />
+                <span asp-validation-for="StartDate" class="text-danger"></span>
+            </td>
+        </tr>
+        <tr>
+            <td><label asp-for="StartTime"></label></td>
+            <td>
+                <select asp-for="StartTime" class="form-control" id="startTimeSelect">
+                    @foreach (var slot in Model.AvailableTimeSlots ?? new List<TimeSpan>())
+                    {
+                        <option value="@slot">@slot.ToString(@"hh\:mm")</option>
+                    }
+                </select>
+                <span asp-validation-for="StartTime" class="text-danger"></span>
+            </td>
+        </tr>
+        <tr>
+            <td><label asp-for="EndTime"></label></td>
+            <td>
+                <select asp-for="EndTime" class="form-control" id="endTimeSelect">
+                    @foreach (var slot in Model.AvailableTimeSlots ?? new List<TimeSpan>())
+                    {
+                        <option value="@slot">@slot.ToString(@"hh\:mm")</option>
+                    }
+                </select>
+                <span asp-validation-for="EndTime" class="text-danger"></span>
+            </td>
+        </tr>
+        <tr>
+            <td><label asp-for="Description"></label></td>
+            <td>
+                <textarea asp-for="Description" class="form-control"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </td>
+        </tr>
+    </table>
+
+    <button type="submit" class="btn btn-primary mt-3">Book Appointment</button>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        // Limit doctor selections to 3
+        const checkboxes = document.querySelectorAll('.doctor-checkbox');
+        const errorLabel = document.getElementById('doctorLimitError');
+
+        checkboxes.forEach(cb => {
+            cb.addEventListener('change', () => {
+                const selected = Array.from(checkboxes).filter(c => c.checked);
+                if (selected.length > 3) {
+                    cb.checked = false;
+                    errorLabel.innerText = "You can only select up to 3 doctors.";
+                } else {
+                    errorLabel.innerText = "";
+                }
+            });
+        });
+
+        // Enforce appointment time is within availability hours (9 AM - 5 PM)
+        document.querySelector('form').addEventListener('submit', function (e) {
+            const startTime = document.getElementById('startTimeSelect').value;
+            const endTime = document.getElementById('endTimeSelect').value;
+
+            const start = parseInt(startTime.replace(':', ''), 10);
+            const end = parseInt(endTime.replace(':', ''), 10);
+
+            if (start < 900 || end > 1700 || start >= end) {
+                e.preventDefault();
+                alert('Please select a valid appointment time between 09:00 and 17:00, and ensure start time is before end time.');
+            }
+        });
+    </script>
+}

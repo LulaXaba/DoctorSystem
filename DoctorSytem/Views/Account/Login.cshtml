@@ -1,0 +1,115 @@
+﻿@model DoctorSystem.ViewModels.LoginViewModel
+
+@{
+    ViewData["Title"] = "Login";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Login</title>
+    <link href="~/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+    <script src="~/lib/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <style>
+        body {
+            background-image: url('/images/pexels-thirdman-7659869.jpg');
+            background-size: cover;
+            background-position: center;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .login-card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 20px 30px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .form-control {
+            padding-left: 2.5rem;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 15px;
+            top: 11px;
+            color: #999;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            top: 11px;
+            cursor: pointer;
+            color: #999;
+        }
+
+        .form-group {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .btn-login {
+            background: #4facfe;
+            color: white;
+            border: none;
+            transition: 0.3s;
+        }
+
+        .btn-login:hover {
+            background: #00c6fb;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-card">
+        <h3 class="text-center mb-4">Welcome Back</h3>
+
+        <form asp-action="Login" method="post" novalidate>
+            <div asp-validation-summary="ModelOnly" class="text-danger text-center mb-2"></div>
+
+            <div class="form-group">
+                <i class="fas fa-envelope input-icon"></i>
+                <input asp-for="Email" class="form-control" placeholder="Email" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <i class="fas fa-lock input-icon"></i>
+                <input asp-for="Password" class="form-control" placeholder="Password" type="password" id="passwordField" />
+                <i class="fas fa-eye password-toggle" id="togglePassword"></i>
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+
+            <div class="form-check mb-3">
+                <input asp-for="RememberMe" class="form-check-input" />
+                <label asp-for="RememberMe" class="form-check-label">Remember Me</label>
+            </div>
+
+            <button type="submit" class="btn btn-login w-100">Login <i class="fas fa-sign-in-alt ms-2"></i></button>
+            <p class="text-center mt-3">Don't have an account? <a asp-action="Register" asp-controller="Account">Register here</a></p>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById("togglePassword").addEventListener("click", function () {
+            const passwordField = document.getElementById("passwordField");
+            const type = passwordField.getAttribute("type") === "password" ? "text" : "password";
+            passwordField.setAttribute("type", type);
+            this.classList.toggle("fa-eye");
+            this.classList.toggle("fa-eye-slash");
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,145 @@
+﻿@model DoctorSystem.ViewModels.RegisterViewModel
+
+@{
+    ViewData["Title"] = "Register";
+    Layout = null;
+    var success = TempData["Success"] as string;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Register</title>
+    <link href="~/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        #bg-video {
+            position: fixed;
+            right: 0;
+            bottom: 0;
+            min-width: 100%;
+            min-height: 100%;
+            z-index: -1;
+            object-fit: cover;
+            filter: brightness(0.6);
+        }
+
+        .register-card {
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 0 25px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 400px;
+            z-index: 1;
+        }
+
+        .form-control {
+            padding-right: 2.5rem; /* ensure icon doesn't overlap text */
+        }
+
+        .toggle-password {
+            position: absolute;
+            top: 50%;
+            right: 12px;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #666;
+            font-size: 1.1rem;
+            z-index: 2;
+            transition: color 0.2s ease;
+        }
+
+            .toggle-password:hover {
+                color: #000;
+            }
+    </style>
+</head>
+<body class="d-flex align-items-center justify-content-center">
+
+    <!-- 🔄 Background Video -->
+    <video autoplay muted loop id="bg-video">
+        <source src="~/images/stock-footage-close-up-of-doctor-holding-tablet-with-examination-result-hologram-floating-at-laboratory-medical.webm" type="video/webm">
+        Your browser does not support the video tag.
+    </video>
+
+    <!-- 🔒 Register Form -->
+    <div class="register-card">
+        <h3 class="text-center mb-3">Create Account</h3>
+
+        @if (!string.IsNullOrEmpty(success))
+        {
+            <div class="alert alert-success text-center">@success</div>
+        }
+
+        <form asp-action="Register" method="post" onsubmit="return validateForm();">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-2 text-center"></div>
+
+            <div class="mb-3">
+                <input asp-for="FullName" class="form-control" placeholder="Full Name" />
+                <span asp-validation-for="FullName" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <input asp-for="Email" class="form-control" placeholder="Email" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+
+            <!-- 🔽 Role Dropdown -->
+            <div class="mb-3">
+                <select asp-for="Role" class="form-control">
+                    <option value="">-- Select Role --</option>
+                    @foreach (var role in Model.Roles)
+                    {
+                        <option value="@role">@role</option>
+                    }
+                </select>
+                <span asp-validation-for="Role" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3 position-relative">
+                <input asp-for="Password" class="form-control" placeholder="Password" type="password" id="password" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+                <i class="fa-solid fa-eye toggle-password" onclick="togglePassword('password', this)"></i>
+            </div>
+
+            <div class="mb-3 position-relative">
+                <input asp-for="ConfirmPassword" class="form-control" placeholder="Confirm Password" type="password" id="confirmPassword" />
+                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                <i class="fa-solid fa-eye toggle-password" onclick="togglePassword('confirmPassword', this)"></i>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">Register</button>
+            <p class="mt-3 text-center">Already have an account? <a asp-controller="Account" asp-action="Login">Login here</a></p>
+        </form>
+    </div>
+
+    <script>
+        function validateForm() {
+            const password = document.getElementById('password').value;
+            const confirm = document.getElementById('confirmPassword').value;
+            if (password !== confirm) {
+                alert("Passwords do not match.");
+                return false;
+            }
+            return true;
+        }
+
+        function togglePassword(id, icon) {
+            const field = document.getElementById(id);
+            const isVisible = field.type === "text";
+            field.type = isVisible ? "password" : "text";
+            icon.classList.toggle("fa-eye");
+            icon.classList.toggle("fa-eye-slash");
+        }
+    </script>
+</body>
+</html>
