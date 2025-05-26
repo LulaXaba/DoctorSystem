@@ -22,6 +22,11 @@ builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SmtpS
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
+// Register our services
+builder.Services.AddScoped<IAppointmentService, AppointmentService>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IValidator<CreateAppointmentDto>, CreateAppointmentDtoValidator>();
+
 var app = builder.Build();
 
 // Ensure Roles and Seed Default Users
