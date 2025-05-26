@@ -7,6 +7,7 @@ using DoctorSystem.Services.Implementations;
 using DoctorSystem.DTOs.Appointments;
 using DoctorSystem.Validators;
 using FluentValidation;
+using DoctorSystem.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,6 +32,7 @@ builder.Services.AddRazorPages();
 builder.Services.AddScoped<IAppointmentService, AppointmentService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IValidator<CreateAppointmentDto>, CreateAppointmentDtoValidator>();
+builder.Services.AddScoped<ITestResultService, TestResultService>();
 
 var app = builder.Build();
 

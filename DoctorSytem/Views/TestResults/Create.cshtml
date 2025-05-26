@@ -1,0 +1,34 @@
+@model DoctorSystem.DTOs.CreateTestResultDto
+
+@{
+    ViewData["Title"] = "Submit Test Result";
+}
+
+<div class="container mt-4">
+    <h2>Submit Test Result</h2>
+
+    <form asp-action="Create" method="post" class="mt-4">
+        <input type="hidden" asp-for="TestRequestId" />
+
+        <div class="form-group mb-3">
+            <label asp-for="ResultSummary" class="form-label">Result Summary</label>
+            <textarea asp-for="ResultSummary" class="form-control" rows="4"></textarea>
+            <span asp-validation-for="ResultSummary" class="text-danger"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="Notes" class="form-label">Additional Notes</label>
+            <textarea asp-for="Notes" class="form-control" rows="3"></textarea>
+            <span asp-validation-for="Notes" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary">Submit Result</button>
+            <a asp-controller="TestRequests" asp-action="Index" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+} 
