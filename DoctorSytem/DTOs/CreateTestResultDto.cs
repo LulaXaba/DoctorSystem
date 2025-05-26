@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Http;
 
 namespace DoctorSystem.DTOs
 {
@@ -13,5 +14,7 @@ namespace DoctorSystem.DTOs
 
         [StringLength(1000)]
         public string? Notes { get; set; }
+
+        public IFormFile? ReportFile { get; set; }
     }
 } 

@@ -27,23 +27,27 @@ namespace DoctorSystem.Controllers
         public async Task<IActionResult> Create(CreateTestResultDto dto)
         {
             if (!ModelState.IsValid)
+            {
+                TempData["ErrorMessage"] = "Please correct the errors in the form.";
                 return View(dto);
+            }
 
             var doctorId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (string.IsNullOrEmpty(doctorId))
             {
-                ModelState.AddModelError("", "Unable to identify the current user.");
+                TempData["ErrorMessage"] = "Unable to identify the current user.";
                 return View(dto);
             }
 
             try
             {
                 await _testResultService.CreateResultAsync(dto, doctorId);
+                TempData["SuccessMessage"] = "Test result has been successfully submitted.";
                 return RedirectToAction("Index", "TestRequests");
             }
             catch (Exception ex)
             {
-                ModelState.AddModelError("", ex.Message);
+                TempData["ErrorMessage"] = ex.Message;
                 return View(dto);
             }
         }

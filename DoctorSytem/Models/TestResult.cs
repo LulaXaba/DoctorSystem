@@ -22,5 +22,8 @@ namespace DoctorSystem.Models
         public string? Notes { get; set; }
         
         public DateTime SubmittedAt { get; set; } = DateTime.UtcNow;
+
+        [StringLength(255)]
+        public string? ReportFilePath { get; set; }
     }
 } 

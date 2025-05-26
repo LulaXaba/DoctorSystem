@@ -7,7 +7,7 @@
 <div class="container mt-4">
     <h2>Submit Test Result</h2>
 
-    <form asp-action="Create" method="post" class="mt-4">
+    <form asp-action="Create" method="post" enctype="multipart/form-data" class="mt-4">
         <input type="hidden" asp-for="TestRequestId" />
 
         <div class="form-group mb-3">
@@ -22,6 +22,14 @@
             <span asp-validation-for="Notes" class="text-danger"></span>
         </div>
 
+        <div class="form-group mb-3">
+            <label asp-for="ReportFile" class="form-label">Attach PDF Report (optional)</label>
+            <input asp-for="ReportFile" type="file" accept="application/pdf" class="form-control" 
+                   onchange="validateFile(this)" />
+            <small class="form-text text-muted">Maximum file size: 10MB. Only PDF files are allowed.</small>
+            <span asp-validation-for="ReportFile" class="text-danger"></span>
+        </div>
+
         <div class="form-group">
             <button type="submit" class="btn btn-primary">Submit Result</button>
             <a asp-controller="TestRequests" asp-action="Index" class="btn btn-secondary">Cancel</a>
@@ -31,4 +39,25 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script>
+        function validateFile(input) {
+            const maxSize = 10 * 1024 * 1024; // 10MB in bytes
+            const file = input.files[0];
+            
+            if (file) {
+                if (file.size > maxSize) {
+                    alert('File size exceeds 10MB limit');
+                    input.value = '';
+                    return false;
+                }
+                
+                if (file.type !== 'application/pdf') {
+                    alert('Only PDF files are allowed');
+                    input.value = '';
+                    return false;
+                }
+            }
+            return true;
+        }
+    </script>
 } 

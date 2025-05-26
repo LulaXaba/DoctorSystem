@@ -1,0 +1,69 @@
+@model List<DoctorSystem.Models.TestResult>
+
+@{
+    ViewData["Title"] = "My Test Results";
+}
+
+<div class="container mt-4">
+    <h2>My Test Results</h2>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">
+            You don't have any test results yet.
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>Test Type</th>
+                        <th>Result Summary</th>
+                        <th>Date</th>
+                        <th>Report</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var result in Model)
+                    {
+                        <tr>
+                            <td>@result.TestRequest?.TestType</td>
+                            <td>@result.ResultSummary</td>
+                            <td>@result.SubmittedAt.ToShortDateString()</td>
+                            <td>
+                                @if (!string.IsNullOrWhiteSpace(result.ReportFilePath))
+                                {
+                                    <a href="@result.ReportFilePath" target="_blank" class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-file-pdf"></i> View PDF
+                                    </a>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">No file attached</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div> 
