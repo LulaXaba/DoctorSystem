@@ -6,7 +6,7 @@ using DoctorSytem.Models;
 
 namespace DoctorSytem.Controllers
 {
-    [Authorize(Roles = "Patient")]
+    [Authorize]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
