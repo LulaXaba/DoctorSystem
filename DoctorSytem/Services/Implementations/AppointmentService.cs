@@ -3,6 +3,7 @@ using DoctorSystem.Data;
 using DoctorSystem.DTOs.Appointments;
 using DoctorSystem.Models;
 using DoctorSystem.Services.Interfaces;
+using Microsoft.AspNetCore.Http;
 
 namespace DoctorSystem.Services.Implementations
 {
@@ -13,10 +14,12 @@ namespace DoctorSystem.Services.Implementations
     public class AppointmentService : IAppointmentService
     {
         private readonly ApplicationDbContext _context;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public AppointmentService(ApplicationDbContext context)
+        public AppointmentService(ApplicationDbContext context, IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         /// <summary>
@@ -49,6 +52,19 @@ namespace DoctorSystem.Services.Implementations
             await _context.Appointments.AddRangeAsync(appointments);
             await _context.SaveChangesAsync();
 
+            // Log the creation of each appointment
+            foreach (var appointment in appointments)
+            {
+                await LogAppointmentActionAsync(
+                    appointment.Id,
+                    patientId,
+                    AuditActionType.Created,
+                    null,
+                    AppointmentStatus.Scheduled,
+                    "Appointment created"
+                );
+            }
+
             return appointments.Select(a => a.Id).ToList();
         }
 
@@ -60,7 +76,6 @@ namespace DoctorSystem.Services.Implementations
         public async Task<List<Appointment>> GetPatientAppointmentsAsync(string patientId)
         {
             return await _context.Appointments
-                .Include(a => a.Doctor)
                 .Where(a => a.PatientId == patientId)
                 .OrderByDescending(a => a.StartTime)
                 .ToListAsync();
@@ -74,24 +89,65 @@ namespace DoctorSystem.Services.Implementations
         public async Task<Appointment?> GetAppointmentByIdAsync(int appointmentId)
         {
             return await _context.Appointments
-                .Include(a => a.Doctor)
-                .Include(a => a.Patient)
                 .FirstOrDefaultAsync(a => a.Id == appointmentId);
         }
 
         /// <summary>
         /// Cancels an appointment.
         /// </summary>
-        /// <param name="appointmentId">ID of the appointment to cancel</param>
+        /// <param name="dto">Cancellation data including appointment ID and optional reason</param>
+        /// <param name="userId">ID of the user requesting cancellation</param>
         /// <returns>True if cancellation was successful, false otherwise</returns>
-        public async Task<bool> CancelAppointmentAsync(int appointmentId)
+        public async Task<bool> CancelAppointmentAsync(CancelAppointmentDto dto, string userId)
         {
-            var appointment = await _context.Appointments.FindAsync(appointmentId);
+            var appointment = await _context.Appointments
+                .FirstOrDefaultAsync(a => a.Id == dto.AppointmentId && 
+                    (a.PatientId == userId || a.DoctorId == userId));
+
             if (appointment == null) return false;
 
+            var previousStatus = appointment.Status;
             appointment.Status = AppointmentStatus.Cancelled;
+            appointment.CancellationReason = dto.Reason;
+
+            // Log the cancellation
+            await LogAppointmentActionAsync(
+                appointment.Id,
+                userId,
+                AuditActionType.Cancelled,
+                previousStatus,
+                AppointmentStatus.Cancelled,
+                dto.Reason
+            );
+
             await _context.SaveChangesAsync();
             return true;
+        }
+
+        /// <summary>
+        /// Logs an appointment-related action for audit purposes.
+        /// </summary>
+        private async Task LogAppointmentActionAsync(
+            int appointmentId,
+            string userId,
+            AuditActionType actionType,
+            AppointmentStatus? previousStatus,
+            AppointmentStatus? newStatus,
+            string? details)
+        {
+            var log = new AppointmentAuditLog
+            {
+                AppointmentId = appointmentId,
+                UserId = userId,
+                ActionType = actionType,
+                PreviousStatus = previousStatus,
+                NewStatus = newStatus,
+                Details = details,
+                IpAddress = _httpContextAccessor.HttpContext?.Connection?.RemoteIpAddress?.ToString()
+            };
+
+            await _context.AppointmentAuditLogs.AddAsync(log);
+            await _context.SaveChangesAsync();
         }
     }
 } 

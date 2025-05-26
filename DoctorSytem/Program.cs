@@ -2,6 +2,11 @@ using DoctorSystem.Data;
 using DoctorSystem.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using DoctorSystem.Services.Interfaces;
+using DoctorSystem.Services.Implementations;
+using DoctorSystem.DTOs.Appointments;
+using DoctorSystem.Validators;
+using FluentValidation;
 
 var builder = WebApplication.CreateBuilder(args);
 

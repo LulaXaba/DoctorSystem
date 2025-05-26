@@ -1,0 +1,115 @@
+@model List<DoctorSystem.Models.Appointment>
+
+@{
+    ViewData["Title"] = "My Appointments";
+}
+
+<div class="container mt-4">
+    <h2>My Appointments</h2>
+    <hr />
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">
+            You don't have any appointments yet.
+            <a asp-action="Create" class="alert-link">Book an appointment</a>
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            @foreach (var appointment in Model)
+            {
+                <div class="col-md-6 mb-4">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="card-title mb-0">@appointment.Department</h5>
+                            <span class="badge @GetStatusBadgeClass(appointment.Status)">
+                                @appointment.Status
+                            </span>
+                        </div>
+                        <div class="card-body">
+                            <dl class="row mb-0">
+                                <dt class="col-sm-4">Date</dt>
+                                <dd class="col-sm-8">@appointment.StartTime.ToShortDateString()</dd>
+
+                                <dt class="col-sm-4">Time</dt>
+                                <dd class="col-sm-8">@appointment.StartTime.ToString("HH:mm") - @appointment.EndTime.ToString("HH:mm")</dd>
+
+                                <dt class="col-sm-4">Doctor</dt>
+                                <dd class="col-sm-8">@appointment.Provider?.FullName</dd>
+
+                                @if (!string.IsNullOrEmpty(appointment.Description))
+                                {
+                                    <dt class="col-sm-4">Notes</dt>
+                                    <dd class="col-sm-8">@appointment.Description</dd>
+                                }
+
+                                @if (appointment.Status == DoctorSystem.Models.AppointmentStatus.Cancelled && !string.IsNullOrEmpty(appointment.CancellationReason))
+                                {
+                                    <dt class="col-sm-4">Cancellation Reason</dt>
+                                    <dd class="col-sm-8">@appointment.CancellationReason</dd>
+                                }
+                            </dl>
+                        </div>
+                        <div class="card-footer">
+                            @if (appointment.Status == DoctorSystem.Models.AppointmentStatus.Scheduled)
+                            {
+                                <button type="button" class="btn btn-danger" onclick="confirmCancellation(@appointment.Id)">
+                                    <i class="fas fa-times"></i> Cancel
+                                </button>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+
+    <div class="mt-4">
+        <a asp-action="Create" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Book New Appointment
+        </a>
+    </div>
+</div>
+
+<!-- Cancellation Confirmation Modal -->
+<div class="modal fade" id="cancellationModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirm Cancellation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to cancel this appointment?</p>
+                <p class="text-danger"><i class="fas fa-exclamation-triangle"></i> This action cannot be undone.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No, Keep Appointment</button>
+                <a id="confirmCancellationBtn" href="#" class="btn btn-danger">Yes, Cancel Appointment</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function confirmCancellation(appointmentId) {
+            const modal = new bootstrap.Modal(document.getElementById('cancellationModal'));
+            const confirmBtn = document.getElementById('confirmCancellationBtn');
+            confirmBtn.href = '@Url.Action("Cancel")/' + appointmentId;
+            modal.show();
+        }
+    </script>
+}
+
+@functions {
+    string GetStatusBadgeClass(DoctorSystem.Models.AppointmentStatus status) => status switch
+    {
+        DoctorSystem.Models.AppointmentStatus.Scheduled => "bg-primary",
+        DoctorSystem.Models.AppointmentStatus.Completed => "bg-success",
+        DoctorSystem.Models.AppointmentStatus.Cancelled => "bg-danger",
+        _ => "bg-secondary"
+    };
+} 

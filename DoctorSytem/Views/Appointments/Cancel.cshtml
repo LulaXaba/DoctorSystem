@@ -1,0 +1,71 @@
+@model DoctorSystem.Models.ViewModels.CancelAppointmentViewModel
+
+@{
+    ViewData["Title"] = "Cancel Appointment";
+}
+
+<div class="container mt-4">
+    <h2>Cancel Appointment</h2>
+    <hr />
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Appointment Details</h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.Appointment != null)
+                    {
+                        <dl class="row">
+                            <dt class="col-sm-4">Department</dt>
+                            <dd class="col-sm-8">@Model.Appointment.Department</dd>
+
+                            <dt class="col-sm-4">Date</dt>
+                            <dd class="col-sm-8">@Model.Appointment.StartTime.ToShortDateString()</dd>
+
+                            <dt class="col-sm-4">Time</dt>
+                            <dd class="col-sm-8">@Model.Appointment.StartTime.ToString("HH:mm") - @Model.Appointment.EndTime.ToString("HH:mm")</dd>
+
+                            <dt class="col-sm-4">Doctor</dt>
+                            <dd class="col-sm-8">@Model.Appointment.Provider?.FullName</dd>
+
+                            @if (!string.IsNullOrEmpty(Model.Appointment.Description))
+                            {
+                                <dt class="col-sm-4">Notes</dt>
+                                <dd class="col-sm-8">@Model.Appointment.Description</dd>
+                            }
+                        </dl>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <form asp-action="Cancel" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="AppointmentId" />
+
+                <div class="form-group mb-3">
+                    <label asp-for="Reason" class="control-label">Reason for Cancellation (Optional)</label>
+                    <textarea asp-for="Reason" class="form-control" rows="4" placeholder="Please provide a reason for cancellation..."></textarea>
+                    <span asp-validation-for="Reason" class="text-danger"></span>
+                </div>
+
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    Are you sure you want to cancel this appointment? This action cannot be undone.
+                </div>
+
+                <div class="form-group mt-4">
+                    <button type="submit" class="btn btn-danger">Confirm Cancellation</button>
+                    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+} 

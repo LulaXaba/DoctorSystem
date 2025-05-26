@@ -79,21 +79,21 @@
     <div class="form-group mb-4">
         <label class="fw-bold mb-2">Select Doctors (Max 3)</label>
         <div class="doctor-grid" id="doctorList">
-            @foreach (var doctor in Model.Providers)
+            @foreach (var doctor in Model.ProviderList)
             {
-                string imageFile = doctor.Text == "Doctor1" ? "doctor1.jpg"
-                                : doctor.Text == "Doctor2" ? "doctor2.jpg"
+                string imageFile = doctor.FullName == "Doctor1" ? "doctor1.jpg"
+                                : doctor.FullName == "Doctor2" ? "doctor2.jpg"
                                 : "default-doctor.png";
 
                 string imagePath = Url.Content($"~/images/{imageFile}");
 
                 <div class="doctor-card">
-                    <img src="@imagePath" alt="@doctor.Text" class="doctor-img" onerror="this.src='/images/default-doctor.png'" />
-                    <div class="doctor-name">@doctor.Text</div>
-                    <div class="doctor-email">@doctor.Text.ToLower().Replace(" ", "")@("@" + "hospital.com")</div>
+                    <img src="@imagePath" alt="@doctor.FullName" class="doctor-img" onerror="this.src='/images/default-doctor.png'" />
+                    <div class="doctor-name">@doctor.FullName</div>
+                    <div class="doctor-email">@doctor.Email</div>
                     <div class="doctor-status">Available</div>
                     <label>
-                        <input type="checkbox" name="SelectedDoctors" value="@doctor.Value" class="doctor-checkbox me-2" />
+                        <input type="checkbox" name="SelectedDoctors" value="@doctor.Id" class="doctor-checkbox me-2" />
                         <span>Select</span>
                     </label>
                 </div>

@@ -1,25 +1,18 @@
-﻿// File: Models/AvailabilitySlot.cs
 using System;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
-namespace DoctorSystem.Models
+namespace DoctorSystem.DTOs.Availability
 {
     /// <summary>
-    /// Represents a time slot when a doctor is available for appointments.
+    /// Data Transfer Object for updating an existing availability slot.
     /// </summary>
-    public class AvailabilitySlot
+    public class UpdateAvailabilitySlotDto
     {
-        public int Id { get; set; }
-
         /// <summary>
-        /// Foreign key to the doctor
+        /// ID of the availability slot to update
         /// </summary>
         [Required]
-        public string DoctorId { get; set; } = null!;
-
-        [ForeignKey("DoctorId")]
-        public ApplicationUser? Doctor { get; set; }
+        public int Id { get; set; }
 
         /// <summary>
         /// Day of the week for this availability slot
@@ -42,7 +35,7 @@ namespace DoctorSystem.Models
         /// <summary>
         /// Whether this slot is recurring weekly
         /// </summary>
-        public bool IsRecurring { get; set; } = true;
+        public bool IsRecurring { get; set; }
 
         /// <summary>
         /// Specific date for non-recurring slots
@@ -52,7 +45,7 @@ namespace DoctorSystem.Models
         /// <summary>
         /// Whether this slot is currently active
         /// </summary>
-        public bool IsActive { get; set; } = true;
+        public bool IsActive { get; set; }
 
         /// <summary>
         /// Notes about this availability slot
@@ -60,4 +53,4 @@ namespace DoctorSystem.Models
         [MaxLength(500)]
         public string? Notes { get; set; }
     }
-}
+} 

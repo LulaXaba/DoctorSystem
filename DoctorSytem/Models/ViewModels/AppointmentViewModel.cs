@@ -60,3 +60,7 @@ namespace DoctorSystem.Models.ViewModels
         public string? Description { get; set; }
     }
 } 
+
+
+
+

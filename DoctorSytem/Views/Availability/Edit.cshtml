@@ -1,0 +1,116 @@
+@model DoctorSystem.DTOs.Availability.UpdateAvailabilitySlotDto
+
+@{
+    ViewData["Title"] = "Edit Availability";
+}
+
+<div class="container">
+    <h2 class="mb-4">Edit Availability</h2>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <form asp-action="Edit" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <input type="hidden" asp-for="Id" />
+
+                        <div class="mb-3">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="isRecurring" 
+                                       asp-for="IsRecurring">
+                                <label class="form-check-label" for="isRecurring">Recurring Weekly</label>
+                            </div>
+                        </div>
+
+                        <div id="recurringFields">
+                            <div class="mb-3">
+                                <label asp-for="DayOfWeek" class="form-label">Day of Week</label>
+                                <select asp-for="DayOfWeek" class="form-select" asp-items="Html.GetEnumSelectList<DayOfWeek>()">
+                                    <option value="">Select a day</option>
+                                </select>
+                                <span asp-validation-for="DayOfWeek" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div id="specificDateField" class="mb-3" style="display: none;">
+                            <label asp-for="SpecificDate" class="form-label">Specific Date</label>
+                            <input asp-for="SpecificDate" class="form-control" type="date" 
+                                   min="@DateTime.Today.ToString("yyyy-MM-dd")" />
+                            <span asp-validation-for="SpecificDate" class="text-danger"></span>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="StartTime" class="form-label">Start Time</label>
+                                    <input asp-for="StartTime" class="form-control" type="time" />
+                                    <span asp-validation-for="StartTime" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="EndTime" class="form-label">End Time</label>
+                                    <input asp-for="EndTime" class="form-control" type="time" />
+                                    <span asp-validation-for="EndTime" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="isActive" 
+                                       asp-for="IsActive">
+                                <label class="form-check-label" for="isActive">Active</label>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Notes" class="form-label">Notes (Optional)</label>
+                            <textarea asp-for="Notes" class="form-control" rows="3" 
+                                      placeholder="Add any additional notes about this availability slot"></textarea>
+                            <span asp-validation-for="Notes" class="text-danger"></span>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                            <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.getElementById('isRecurring').addEventListener('change', function() {
+            const recurringFields = document.getElementById('recurringFields');
+            const specificDateField = document.getElementById('specificDateField');
+            
+            if (this.checked) {
+                recurringFields.style.display = 'block';
+                specificDateField.style.display = 'none';
+            } else {
+                recurringFields.style.display = 'none';
+                specificDateField.style.display = 'block';
+            }
+        });
+
+        // Initialize the form state based on the model
+        document.addEventListener('DOMContentLoaded', function() {
+            const isRecurring = document.getElementById('isRecurring');
+            const recurringFields = document.getElementById('recurringFields');
+            const specificDateField = document.getElementById('specificDateField');
+            
+            if (isRecurring.checked) {
+                recurringFields.style.display = 'block';
+                specificDateField.style.display = 'none';
+            } else {
+                recurringFields.style.display = 'none';
+                specificDateField.style.display = 'block';
+            }
+        });
+    </script>
+} 

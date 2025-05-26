@@ -12,6 +12,8 @@ namespace DoctorSystem.Data
         }
 
         public DbSet<Appointment> Appointments { get; set; }
+        public DbSet<AppointmentAuditLog> AppointmentAuditLogs { get; set; }
+        public DbSet<AvailabilitySlot> AvailabilitySlots { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -27,6 +29,18 @@ namespace DoctorSystem.Data
                 .HasOne(a => a.Provider)
                 .WithMany()
                 .HasForeignKey(a => a.ProviderId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<AppointmentAuditLog>()
+                .HasOne(a => a.Appointment)
+                .WithMany()
+                .HasForeignKey(a => a.AppointmentId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<AppointmentAuditLog>()
+                .HasOne(a => a.User)
+                .WithMany()
+                .HasForeignKey(a => a.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
         }
     }

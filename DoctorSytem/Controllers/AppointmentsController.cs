@@ -34,7 +34,7 @@ namespace DoctorSystem.Controllers
         /// Displays the appointment creation form.
         /// </summary>
         /// <returns>The appointment creation view with populated doctor list and time slots</returns>
-        public async Task<IActionResult> Create()
+/*         public async Task<IActionResult> Create()
         {
             var viewModel = new AppointmentViewModel
             {
@@ -43,7 +43,7 @@ namespace DoctorSystem.Controllers
             };
 
             return View(viewModel);
-        }
+        } */
 
         /// <summary>
         /// Handles the appointment creation form submission.
@@ -110,6 +110,70 @@ namespace DoctorSystem.Controllers
         }
 
         /// <summary>
+        /// Displays the appointment cancellation form.
+        /// </summary>
+        /// <param name="id">ID of the appointment to cancel</param>
+        /// <returns>The cancellation form view</returns>
+        public async Task<IActionResult> Cancel(int id)
+        {
+            var appointment = await _appointmentService.GetAppointmentByIdAsync(id);
+            if (appointment == null)
+            {
+                return NotFound();
+            }
+
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId) || (appointment.PatientId != userId && appointment.DoctorId != userId))
+            {
+                return Unauthorized();
+            }
+
+            var viewModel = new CancelAppointmentViewModel
+            {
+                AppointmentId = id,
+                Appointment = appointment
+            };
+
+            return View(viewModel);
+        }
+
+        /// <summary>
+        /// Handles the appointment cancellation form submission.
+        /// </summary>
+        /// <param name="viewModel">The cancellation data from the form</param>
+        /// <returns>Redirects to appointment list on success, returns to form on failure</returns>
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Cancel(CancelAppointmentViewModel viewModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                viewModel.Appointment = await _appointmentService.GetAppointmentByIdAsync(viewModel.AppointmentId);
+                return View(viewModel);
+            }
+
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized();
+            }
+
+            var dto = new CancelAppointmentDto
+            {
+                AppointmentId = viewModel.AppointmentId,
+                Reason = viewModel.Reason
+            };
+
+            var result = await _appointmentService.CancelAppointmentAsync(dto, userId);
+            if (!result)
+            {
+                return NotFound();
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        /// <summary>
         /// Generates default time slots for appointment scheduling (09:00-17:00).
         /// </summary>
         /// <returns>List of available time slots</returns>
@@ -121,21 +185,6 @@ namespace DoctorSystem.Controllers
                 slots.Add(new TimeSpan(hour, 0, 0));
             }
             return slots;
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Cancel(int id)
-        {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var result = await _appointmentService.CancelAppointmentAsync(id, userId);
-            
-            if (!result)
-            {
-                return NotFound();
-            }
-
-            return RedirectToAction(nameof(Index));
         }
     }
 } 

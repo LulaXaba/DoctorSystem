@@ -5,9 +5,9 @@ namespace DoctorSystem.Services.Interfaces
 {
     public interface IAppointmentService
     {
-        Task<Appointment> CreateAppointmentAsync(CreateAppointmentDto dto, string patientId);
-        Task<IEnumerable<Appointment>> GetPatientAppointmentsAsync(string patientId);
+        Task<List<int>> CreateAppointmentAsync(CreateAppointmentDto dto, string patientId);
+        Task<List<Appointment>> GetPatientAppointmentsAsync(string patientId);
         Task<Appointment?> GetAppointmentByIdAsync(int id);
-        Task<bool> CancelAppointmentAsync(int id, string userId);
+        Task<bool> CancelAppointmentAsync(CancelAppointmentDto dto, string userId);
     }
 } 
