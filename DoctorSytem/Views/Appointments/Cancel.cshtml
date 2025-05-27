@@ -28,12 +28,12 @@
                             <dd class="col-sm-8">@Model.Appointment.StartTime.ToString("HH:mm") - @Model.Appointment.EndTime.ToString("HH:mm")</dd>
 
                             <dt class="col-sm-4">Doctor</dt>
-                            <dd class="col-sm-8">@Model.Appointment.Provider?.FullName</dd>
+                            <dd class="col-sm-8">@Model.Appointment.Doctor?.FullName</dd>
 
-                            @if (!string.IsNullOrEmpty(Model.Appointment.Description))
+                            @if (!string.IsNullOrEmpty(Model.Appointment.Notes))
                             {
                                 <dt class="col-sm-4">Notes</dt>
-                                <dd class="col-sm-8">@Model.Appointment.Description</dd>
+                                <dd class="col-sm-8">@Model.Appointment.Notes</dd>
                             }
                         </dl>
                     }

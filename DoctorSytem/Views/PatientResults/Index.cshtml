@@ -4,6 +4,10 @@
     ViewData["Title"] = "My Test Results";
 }
 
+@section Styles {
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf_viewer.min.css" rel="stylesheet">
+}
+
 <div class="container mt-4">
     <h2>My Test Results</h2>
 
@@ -51,8 +55,12 @@
                             <td>
                                 @if (!string.IsNullOrWhiteSpace(result.ReportFilePath))
                                 {
-                                    <a href="@result.ReportFilePath" target="_blank" class="btn btn-sm btn-outline-primary">
-                                        <i class="fas fa-file-pdf"></i> View PDF
+                                    <button type="button" class="btn btn-sm btn-outline-primary" 
+                                            onclick="showPdfPreview('@result.ReportFilePath')">
+                                        <i class="fas fa-eye"></i> Preview
+                                    </button>
+                                    <a href="@result.ReportFilePath" target="_blank" class="btn btn-sm btn-outline-secondary">
+                                        <i class="fas fa-download"></i> Download
                                     </a>
                                 }
                                 else
@@ -66,4 +74,90 @@
             </table>
         </div>
     }
-</div> 
+</div>
+
+<!-- PDF Preview Modal -->
+<div class="modal fade" id="pdfPreviewModal" tabindex="-1" aria-labelledby="pdfPreviewModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="pdfPreviewModalLabel">Test Report Preview</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="pdfContainer" style="height: 80vh;">
+                    <canvas id="pdfCanvas"></canvas>
+                </div>
+                <div class="pdf-controls mt-2">
+                    <button class="btn btn-sm btn-secondary" onclick="prevPage()">Previous</button>
+                    <span id="pageInfo">Page <span id="pageNum"></span> of <span id="pageCount"></span></span>
+                    <button class="btn btn-sm btn-secondary" onclick="nextPage()">Next</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script>
+        // Initialize PDF.js
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        
+        let currentPdf = null;
+        let currentPage = 1;
+        let pageCount = 0;
+
+        function showPdfPreview(pdfUrl) {
+            const modal = new bootstrap.Modal(document.getElementById('pdfPreviewModal'));
+            modal.show();
+            
+            // Load the PDF
+            pdfjsLib.getDocument(pdfUrl).promise.then(function(pdf) {
+                currentPdf = pdf;
+                pageCount = pdf.numPages;
+                document.getElementById('pageCount').textContent = pageCount;
+                renderPage(1);
+            });
+        }
+
+        function renderPage(pageNumber) {
+            currentPdf.getPage(pageNumber).then(function(page) {
+                const canvas = document.getElementById('pdfCanvas');
+                const context = canvas.getContext('2d');
+                const viewport = page.getViewport({ scale: 1.5 });
+
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
+
+                const renderContext = {
+                    canvasContext: context,
+                    viewport: viewport
+                };
+
+                page.render(renderContext);
+                document.getElementById('pageNum').textContent = pageNumber;
+                currentPage = pageNumber;
+            });
+        }
+
+        function prevPage() {
+            if (currentPage > 1) {
+                renderPage(currentPage - 1);
+            }
+        }
+
+        function nextPage() {
+            if (currentPage < pageCount) {
+                renderPage(currentPage + 1);
+            }
+        }
+
+        // Close modal and cleanup
+        document.getElementById('pdfPreviewModal').addEventListener('hidden.bs.modal', function () {
+            currentPdf = null;
+            currentPage = 1;
+            pageCount = 0;
+        });
+    </script>
+} 

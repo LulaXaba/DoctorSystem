@@ -9,17 +9,23 @@ namespace DoctorSystem.Services
     {
         private readonly ApplicationDbContext _context;
         private readonly IWebHostEnvironment _environment;
+        private readonly IEmailService _emailService;
 
-        public TestResultService(ApplicationDbContext context, IWebHostEnvironment environment)
+        public TestResultService(
+            ApplicationDbContext context, 
+            IWebHostEnvironment environment,
+            IEmailService emailService)
         {
             _context = context;
             _environment = environment;
+            _emailService = emailService;
         }
 
         public async Task<TestResult> CreateResultAsync(CreateTestResultDto dto, string doctorId)
         {
             var request = await _context.TestRequests
                 .Include(tr => tr.Result)
+                .Include(tr => tr.Patient)
                 .FirstOrDefaultAsync(tr => tr.Id == dto.TestRequestId && tr.DoctorId == doctorId);
 
             if (request == null)
@@ -64,6 +70,27 @@ namespace DoctorSystem.Services
             request.Status = "Completed";
 
             await _context.SaveChangesAsync();
+
+            // Send email notification
+            if (request.Patient != null)
+            {
+                try
+                {
+                    await _emailService.SendTestResultNotificationAsync(
+                        request.Patient.Email,
+                        request.Patient.FullName,
+                        request.TestType,
+                        dto.ResultSummary
+                    );
+                }
+                catch (Exception ex)
+                {
+                    // Log the email error but don't fail the operation
+                    // TODO: Add proper logging
+                    Console.WriteLine($"Failed to send email notification: {ex.Message}");
+                }
+            }
+
             return result;
         }
 

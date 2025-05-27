@@ -29,16 +29,16 @@ namespace DoctorSystem.Controllers
             {
                 var mail = new MailMessage
                 {
-                    From = new MailAddress(_smtp.SenderEmail),
+                    From = new MailAddress(_smtp.FromEmail),
                     Subject = subject,
                     Body = body,
                     IsBodyHtml = true
                 };
                 mail.To.Add(toEmail);
 
-                using var smtp = new SmtpClient(_smtp.Host, _smtp.Port)
+                using var smtp = new SmtpClient(_smtp.Server, _smtp.Port)
                 {
-                    Credentials = new NetworkCredential(_smtp.SenderEmail, _smtp.SenderPassword),
+                    Credentials = new NetworkCredential(_smtp.Username, _smtp.Password),
                     EnableSsl = true
                 };
 

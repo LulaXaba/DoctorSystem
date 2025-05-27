@@ -37,12 +37,12 @@
                                 <dd class="col-sm-8">@appointment.StartTime.ToString("HH:mm") - @appointment.EndTime.ToString("HH:mm")</dd>
 
                                 <dt class="col-sm-4">Doctor</dt>
-                                <dd class="col-sm-8">@appointment.Provider?.FullName</dd>
+                                <dd class="col-sm-8">@appointment.Doctor?.FullName</dd>
 
-                                @if (!string.IsNullOrEmpty(appointment.Description))
+                                @if (!string.IsNullOrEmpty(appointment.Notes))
                                 {
                                     <dt class="col-sm-4">Notes</dt>
-                                    <dd class="col-sm-8">@appointment.Description</dd>
+                                    <dd class="col-sm-8">@appointment.Notes</dd>
                                 }
 
                                 @if (appointment.Status == DoctorSystem.Models.AppointmentStatus.Cancelled && !string.IsNullOrEmpty(appointment.CancellationReason))

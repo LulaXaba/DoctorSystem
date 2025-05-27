@@ -22,15 +22,15 @@ namespace DoctorSystem.Data
             base.OnModelCreating(builder);
 
             builder.Entity<Appointment>()
-                .HasOne(a => a.Customer)
+                .HasOne(a => a.Patient)
                 .WithMany()
-                .HasForeignKey(a => a.CustomerId)
+                .HasForeignKey(a => a.PatientId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder.Entity<Appointment>()
-                .HasOne(a => a.Provider)
+                .HasOne(a => a.Doctor)
                 .WithMany()
-                .HasForeignKey(a => a.ProviderId)
+                .HasForeignKey(a => a.DoctorId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder.Entity<AppointmentAuditLog>()

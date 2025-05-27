@@ -34,7 +34,7 @@ namespace DoctorSystem.Controllers
         /// Displays the appointment creation form.
         /// </summary>
         /// <returns>The appointment creation view with populated doctor list and time slots</returns>
-/*         public async Task<IActionResult> Create()
+        public async Task<IActionResult> Create()
         {
             var viewModel = new AppointmentViewModel
             {
@@ -43,7 +43,7 @@ namespace DoctorSystem.Controllers
             };
 
             return View(viewModel);
-        } */
+        }
 
         /// <summary>
         /// Handles the appointment creation form submission.
@@ -107,6 +107,22 @@ namespace DoctorSystem.Controllers
 
             var appointments = await _appointmentService.GetPatientAppointmentsAsync(userId);
             return View(appointments);
+        }
+
+        /// <summary>
+        /// Displays the list of appointments for the current user.
+        /// </summary>
+        /// <returns>The appointment list view</returns>
+        public async Task<IActionResult> MyAppointments()
+        {
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized();
+            }
+
+            var appointments = await _appointmentService.GetPatientAppointmentsAsync(userId);
+            return View("Index", appointments);
         }
 
         /// <summary>

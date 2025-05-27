@@ -2,9 +2,10 @@
 {
     public class SmtpSettings
     {
-        public string? SenderEmail { get; set; }
-        public string? SenderPassword { get; set; }
-        public string? Host { get; set; }
+        public string Server { get; set; } = string.Empty;
         public int Port { get; set; }
+        public string Username { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
+        public string FromEmail { get; set; } = string.Empty;
     }
 }

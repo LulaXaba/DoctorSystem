@@ -14,28 +14,24 @@ namespace DoctorSystem.Models
     {
         public int Id { get; set; }
 
-        // FK to doctor/provider
-        public string ProviderId { get; set; } = null!;
+        // FK to doctor
+        public string DoctorId { get; set; } = null!;
 
-        [ForeignKey("ProviderId")]
-        public ApplicationUser? Provider { get; set; }
+        [ForeignKey("DoctorId")]
+        public ApplicationUser? Doctor { get; set; }
 
-        // FK to customer (user who booked)
-        public string CustomerId { get; set; } = null!;
+        // FK to patient
+        public string PatientId { get; set; } = null!;
 
-        [ForeignKey("CustomerId")]
-        public ApplicationUser? Customer { get; set; }
+        [ForeignKey("PatientId")]
+        public ApplicationUser? Patient { get; set; }
 
         public string Department { get; set; } = null!;
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
 
-        public string? Description { get; set; }
+        public string? Notes { get; set; }
         public AppointmentStatus Status { get; set; } = AppointmentStatus.Scheduled;
         public string? CancellationReason { get; set; }
-
-        public string PatientId { get; set; } = null!;
-        public string DoctorId { get; set; } = null!;
-        public string? Notes { get; set; }
     }
 }
