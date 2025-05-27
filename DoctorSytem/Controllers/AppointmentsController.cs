@@ -202,5 +202,23 @@ namespace DoctorSystem.Controllers
             }
             return slots;
         }
+
+        [Authorize(Roles = "Patient")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CheckIn(CheckInDto dto)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var result = await _appointmentService.CheckInAsync(dto, userId);
+
+            if (!result)
+            {
+                TempData["Error"] = "Check-in failed. Please ensure the appointment is scheduled for today and hasn't been checked in already.";
+                return RedirectToAction("Index");
+            }
+
+            TempData["Success"] = "You have checked in successfully.";
+            return RedirectToAction("Index");
+        }
     }
 } 

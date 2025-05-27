@@ -9,5 +9,6 @@ namespace DoctorSystem.Services.Interfaces
         Task<List<Appointment>> GetPatientAppointmentsAsync(string patientId);
         Task<Appointment?> GetAppointmentByIdAsync(int id);
         Task<bool> CancelAppointmentAsync(CancelAppointmentDto dto, string userId);
+        Task<bool> CheckInAsync(CheckInDto dto, string patientId);
     }
 } 

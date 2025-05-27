@@ -5,5 +5,6 @@ namespace DoctorSystem.Services
     public interface IEmailService
     {
         Task SendTestResultNotificationAsync(string patientEmail, string patientName, string testType, string resultSummary);
+        Task SendEmailAsync(string to, string subject, string body);
     }
 } 

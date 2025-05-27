@@ -33,5 +33,9 @@ namespace DoctorSystem.Models
         public string? Notes { get; set; }
         public AppointmentStatus Status { get; set; } = AppointmentStatus.Scheduled;
         public string? CancellationReason { get; set; }
+        
+        // Check-in related fields
+        public DateTime? CheckedInAt { get; set; }
+        public string? CheckInNotes { get; set; }
     }
 }

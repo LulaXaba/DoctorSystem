@@ -33,7 +33,7 @@ builder.Services.AddRazorPages();
 builder.Services.AddScoped<IAppointmentService, AppointmentService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IValidator<CreateAppointmentDto>, CreateAppointmentDtoValidator>();
-builder.Services.AddScoped<ITestResultService, TestResultService>();
+builder.Services.AddScoped<ITestResultService, DoctorSystem.Services.Implementations.TestResultService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 
 var app = builder.Build();

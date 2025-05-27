@@ -15,11 +15,13 @@ namespace DoctorSystem.Services.Implementations
     {
         private readonly ApplicationDbContext _context;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IEmailService _emailService;
 
-        public AppointmentService(ApplicationDbContext context, IHttpContextAccessor httpContextAccessor)
+        public AppointmentService(ApplicationDbContext context, IHttpContextAccessor httpContextAccessor, IEmailService emailService)
         {
             _context = context;
             _httpContextAccessor = httpContextAccessor;
+            _emailService = emailService;
         }
 
         /// <summary>
@@ -63,6 +65,21 @@ namespace DoctorSystem.Services.Implementations
                     AppointmentStatus.Scheduled,
                     "Appointment created"
                 );
+            }
+
+            // Send appointment confirmation email
+            var patient = await _context.Users.FindAsync(patientId);
+            foreach (var doctorId in dto.DoctorIds)
+            {
+                var doctor = await _context.Users.FindAsync(doctorId);
+                if (patient != null && doctor != null)
+                {
+                    await _emailService.SendEmailAsync(
+                        patient.Email,
+                        "Appointment Confirmed",
+                        $"Hi {patient.FullName}, your appointment with Dr. {doctor.FullName} has been booked for {dto.AppointmentDate.ToShortDateString()} at {dto.StartTime.ToString(@"hh\:mm")}."
+                    );
+                }
             }
 
             return appointments.Select(a => a.Id).ToList();
@@ -121,6 +138,17 @@ namespace DoctorSystem.Services.Implementations
             );
 
             await _context.SaveChangesAsync();
+
+            // Send cancellation email
+            if (appointment.Patient != null)
+            {
+                await _emailService.SendEmailAsync(
+                    appointment.Patient.Email,
+                    "Appointment Cancelled",
+                    $"Hi {appointment.Patient.FullName}, your appointment on {appointment.StartTime.ToShortDateString()} was cancelled."
+                );
+            }
+
             return true;
         }
 
@@ -148,6 +176,39 @@ namespace DoctorSystem.Services.Implementations
 
             await _context.AppointmentAuditLogs.AddAsync(log);
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<bool> CheckInAsync(CheckInDto dto, string patientId)
+        {
+            var appointment = await _context.Appointments
+                .Include(a => a.Patient)
+                .FirstOrDefaultAsync(a => a.Id == dto.AppointmentId && a.PatientId == patientId);
+
+            if (appointment == null)
+                return false;
+
+            if (appointment.Status != AppointmentStatus.Scheduled || appointment.CheckedInAt != null)
+                return false;
+
+            if (appointment.StartTime.Date != DateTime.Today)
+                return false;
+
+            appointment.CheckedInAt = DateTime.UtcNow;
+            appointment.CheckInNotes = dto.Notes;
+
+            await _context.SaveChangesAsync();
+
+            // Send check-in confirmation email
+            if (appointment.Patient != null)
+            {
+                await _emailService.SendEmailAsync(
+                    appointment.Patient.Email,
+                    "You Have Checked In",
+                    $"Hi {appointment.Patient.FullName}, you've successfully checked in for your appointment on {appointment.StartTime.ToShortDateString()} at {appointment.StartTime.ToShortTimeString()}."
+                );
+            }
+
+            return true;
         }
     }
 } 

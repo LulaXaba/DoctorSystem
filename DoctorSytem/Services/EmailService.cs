@@ -41,5 +41,24 @@ namespace DoctorSystem.Services
 
             await client.SendMailAsync(message);
         }
+
+        public async Task SendEmailAsync(string to, string subject, string body)
+        {
+            using var client = new SmtpClient(_smtpSettings.Server, _smtpSettings.Port)
+            {
+                EnableSsl = true,
+                Credentials = new System.Net.NetworkCredential(_smtpSettings.Username, _smtpSettings.Password)
+            };
+
+            var message = new MailMessage
+            {
+                From = new MailAddress(_smtpSettings.FromEmail, "Doctor System"),
+                Subject = subject,
+                Body = body,
+                IsBodyHtml = true
+            };
+            message.To.Add(to);
+            await client.SendMailAsync(message);
+        }
     }
 } 
