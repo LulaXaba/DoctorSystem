@@ -18,8 +18,11 @@ namespace DoctorSystem.Controllers
 
         public IActionResult Create(int appointmentId)
         {
-            ViewBag.AppointmentId = appointmentId;
-            return View(new CreatePrescriptionDto { AppointmentId = appointmentId });
+            var dto = new CreatePrescriptionDto
+            {
+                AppointmentId = appointmentId
+            };
+            return View(dto);
         }
 
         [HttpPost]
@@ -27,12 +30,15 @@ namespace DoctorSystem.Controllers
         public async Task<IActionResult> Create(CreatePrescriptionDto dto)
         {
             if (!ModelState.IsValid)
+            {
                 return View(dto);
+            }
 
             try
             {
                 var doctorId = User.FindFirst("sub")?.Value;
                 await _prescriptionService.CreateAsync(dto, doctorId);
+                TempData["SuccessMessage"] = "Prescription created successfully.";
                 return RedirectToAction("Details", "Appointments", new { id = dto.AppointmentId });
             }
             catch (System.Exception ex)

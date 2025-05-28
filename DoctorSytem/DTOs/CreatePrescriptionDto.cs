@@ -7,10 +7,14 @@ namespace DoctorSystem.DTOs
         [Required]
         public int AppointmentId { get; set; }
 
-        [Required, MaxLength(100)]
+        [Required]
+        [MaxLength(100)]
+        [Display(Name = "Medication Name")]
         public string MedicationName { get; set; }
 
-        [Required, MaxLength(500)]
+        [Required]
+        [MaxLength(500)]
+        [Display(Name = "Dosage Instructions")]
         public string DosageInstructions { get; set; }
     }
 } 
