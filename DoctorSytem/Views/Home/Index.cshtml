@@ -115,9 +115,9 @@
     <a href="#" class="active"><i class="fas fa-home"></i> Dashboard</a>
     <a href="@Url.Action("Create", "Appointments")"><i class="fas fa-calendar-plus"></i> Book Appointment</a>
     <a href="@Url.Action("MyAppointments", "Appointments")"><i class="fas fa-calendar-alt"></i> My Appointments</a>
-    <a href="#"><i class="fas fa-file-medical"></i> Medical History</a>
-    <a href="#"><i class="fas fa-pills"></i> Prescriptions</a>
-    <a href="#"><i class="fas fa-vial"></i> Lab Results</a>
+    <a href="@Url.Action("Index", "MedicalRecords")"><i class="fas fa-file-medical"></i> Medical Records</a>
+    <a href="@Url.Action("Index", "PatientPrescriptions")"><i class="fas fa-pills"></i> Prescriptions</a>
+    <a href="@Url.Action("Index", "PatientResults")"><i class="fas fa-vial"></i> Test Results</a>
     <a href="#"><i class="fas fa-comments"></i> Feedback</a>
     <a href="#"><i class="fas fa-credit-card"></i> Payments</a>
     <a href="@Url.Action("Compose", "Messages")"><i class="fas fa-envelope"></i> Contact Doctor</a>
