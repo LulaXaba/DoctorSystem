@@ -158,22 +158,23 @@
                 </div>
             </a>
 
-            <!-- Static cards (non-clickable) -->
-            <div class="dashboard-card">
+            <!-- Medical Records Card -->
+            <a href="@Url.Action("Index", "MedicalRecords")" class="dashboard-card" style="text-decoration: none; color: inherit;">
                 <i class="fas fa-notes-medical"></i>
                 <div>
                     <h5>Medical Records</h5>
                     <p class="mb-0">Check diagnosis and visit history</p>
                 </div>
-            </div>
+            </a>
 
-            <div class="dashboard-card">
+            <!-- Prescriptions Card -->
+            <a href="@Url.Action("Index", "PatientPrescriptions")" class="dashboard-card" style="text-decoration: none; color: inherit;">
                 <i class="fas fa-pills"></i>
                 <div>
                     <h5>Prescriptions</h5>
                     <p class="mb-0">Review your medications</p>
                 </div>
-            </div>
+            </a>
 
             <a href="@Url.Action("Index", "PatientResults")" style="text-decoration: none; color: inherit;">
                 <div class="dashboard-card">
