@@ -119,7 +119,7 @@
     <a href="@Url.Action("Index", "PatientPrescriptions")"><i class="fas fa-pills"></i> Prescriptions</a>
     <a href="@Url.Action("Index", "PatientResults")"><i class="fas fa-vial"></i> Test Results</a>
     <a href="#"><i class="fas fa-comments"></i> Feedback</a>
-    <a href="#"><i class="fas fa-credit-card"></i> Payments</a>
+    <a href="@Url.Action("MyPayments", "Payments")"><i class="fas fa-credit-card"></i> Payments</a>
     <a href="@Url.Action("Compose", "Messages")"><i class="fas fa-envelope"></i> Contact Doctor</a>
 </div>
 
@@ -194,13 +194,15 @@
                 </div>
             </div>
 
-            <div class="dashboard-card">
-                <i class="fas fa-file-invoice"></i>
-                <div>
-                    <h5>Billing</h5>
-                    <p class="mb-0">View invoices and payments</p>
+            <a href="@Url.Action("MyPayments", "Payments")" style="text-decoration: none; color: inherit;">
+                <div class="dashboard-card">
+                    <i class="fas fa-file-invoice"></i>
+                    <div>
+                        <h5>Billing</h5>
+                        <p class="mb-0">View invoices and payments</p>
+                    </div>
                 </div>
-            </div>
+            </a>
         </div>
     </div>
 </div>

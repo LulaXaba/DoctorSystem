@@ -17,6 +17,7 @@ namespace DoctorSystem.Data
         public DbSet<TestRequest> TestRequests { get; set; }
         public DbSet<TestResult> TestResults { get; set; }
         public DbSet<Prescription> Prescriptions { get; set; }
+        public DbSet<Payment> Payments { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -80,6 +81,18 @@ namespace DoctorSystem.Data
                 .HasOne(p => p.Patient)
                 .WithMany()
                 .HasForeignKey(p => p.PatientId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<Payment>()
+                .HasOne(p => p.Patient)
+                .WithMany()
+                .HasForeignKey(p => p.PatientId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<Payment>()
+                .HasOne(p => p.Appointment)
+                .WithMany()
+                .HasForeignKey(p => p.AppointmentId)
                 .OnDelete(DeleteBehavior.Restrict);
         }
     }

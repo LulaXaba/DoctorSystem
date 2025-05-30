@@ -37,6 +37,7 @@ builder.Services.AddScoped<ITestResultService, DoctorSystem.Services.Implementat
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IPrescriptionService, PrescriptionService>();
 builder.Services.AddScoped<IMedicalRecordService, MedicalRecordService>();
+builder.Services.AddScoped<IPaymentService, PaymentService>();
 
 var app = builder.Build();
 

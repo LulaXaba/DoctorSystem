@@ -1,0 +1,35 @@
+@model DoctorSystem.Models.Payment
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Payment Confirmation</title>
+</head>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+    <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
+        <h2 style="color: #2c3e50;">Payment Confirmation</h2>
+        
+        <p>Dear @Model.Patient.FullName,</p>
+        
+        <p>This email confirms that we have received your payment of @Model.Amount.ToString("C") via @Model.Method.</p>
+        
+        @if (Model.Appointment != null)
+        {
+            <p>This payment is for your appointment scheduled on @Model.Appointment.StartTime.ToString("g").</p>
+        }
+        
+        <div style="background-color: #f8f9fa; padding: 15px; border-radius: 5px; margin: 20px 0;">
+            <h3 style="color: #2c3e50; margin-top: 0;">Payment Details</h3>
+            <p><strong>Amount:</strong> @Model.Amount.ToString("C")</p>
+            <p><strong>Payment Method:</strong> @Model.Method</p>
+            <p><strong>Reference Number:</strong> @(Model.ReferenceNumber ?? "N/A")</p>
+            <p><strong>Date:</strong> @Model.CreatedAt.ToString("g")</p>
+        </div>
+        
+        <p>Thank you for your payment. If you have any questions, please don't hesitate to contact us.</p>
+        
+        <p>Best regards,<br>Your Healthcare Team</p>
+    </div>
+</body>
+</html> 

@@ -1,0 +1,48 @@
+@model IEnumerable<DoctorSystem.Models.Payment>
+
+@{
+    ViewData["Title"] = "My Payments";
+}
+
+<div class="container mt-4">
+    <h2>My Payments</h2>
+    <p>
+        <a asp-action="Create" class="btn btn-primary">Create New Payment</a>
+    </p>
+
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Amount</th>
+                    <th>Method</th>
+                    <th>Status</th>
+                    <th>Reference</th>
+                    <th>Appointment</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.CreatedAt.ToString("g")</td>
+                        <td>@item.Amount.ToString("C")</td>
+                        <td>@item.Method</td>
+                        <td>
+                            <span class="badge @(item.Status switch {
+                                DoctorSystem.Models.PaymentStatus.Completed => "bg-success",
+                                DoctorSystem.Models.PaymentStatus.Failed => "bg-danger",
+                                _ => "bg-warning"
+                            })">
+                                @item.Status
+                            </span>
+                        </td>
+                        <td>@(item.ReferenceNumber ?? "-")</td>
+                        <td>@(item.Appointment?.StartTime.ToString("g") ?? "-")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div> 
