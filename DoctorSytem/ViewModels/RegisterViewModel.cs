@@ -24,5 +24,7 @@ namespace DoctorSystem.ViewModels
         public string? ConfirmPassword { get; set; }
         public string? Role { get; set; }
         public List<string> Roles { get; set; } = new List<string>();
+        public string? Department { get; set; }
+        public List<string> Departments { get; set; } = new List<string> { "General Medicine", "Cardiology", "Dermatology", "Neurology", "Pediatrics" };
     }
 }

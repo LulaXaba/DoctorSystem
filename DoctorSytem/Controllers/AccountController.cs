@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace DoctorSystem.Controllers
 {
@@ -28,7 +29,8 @@ namespace DoctorSystem.Controllers
         {
             var model = new RegisterViewModel
             {
-                Roles = _roleManager.Roles.Select(r => r.Name).ToList()
+                Roles = _roleManager.Roles.Select(r => r.Name).ToList(),
+                Departments = new List<string> { "General Medicine", "Cardiology", "Dermatology", "Neurology", "Pediatrics" }
             };
             return View(model);
         }
@@ -38,6 +40,7 @@ namespace DoctorSystem.Controllers
         public async Task<IActionResult> Register(RegisterViewModel model)
         {
             model.Roles = _roleManager.Roles.Select(r => r.Name).ToList();
+            model.Departments = new List<string> { "General Medicine", "Cardiology", "Dermatology", "Neurology", "Pediatrics" };
 
             if (ModelState.IsValid)
             {
@@ -45,7 +48,9 @@ namespace DoctorSystem.Controllers
                 {
                     UserName = model.Email,
                     Email = model.Email,
-                    FullName = model.FullName
+                    FullName = model.FullName,
+                    Role = model.Role,
+                    Department = model.Role == "Doctor" ? model.Department : null
                 };
 
                 var result = await _userManager.CreateAsync(user, model.Password);

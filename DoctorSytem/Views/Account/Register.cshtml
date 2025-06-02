@@ -95,7 +95,7 @@
 
             <!-- 🔽 Role Dropdown -->
             <div class="mb-3">
-                <select asp-for="Role" class="form-control">
+                <select asp-for="Role" class="form-control" id="roleSelect">
                     <option value="">-- Select Role --</option>
                     @foreach (var role in Model.Roles)
                     {
@@ -103,6 +103,18 @@
                     }
                 </select>
                 <span asp-validation-for="Role" class="text-danger"></span>
+            </div>
+
+            <!-- 🔽 Department Dropdown (only for Doctor) -->
+            <div class="mb-3" id="departmentDiv" style="display:none;">
+                <select asp-for="Department" class="form-control">
+                    <option value="">-- Select Department --</option>
+                    @foreach (var dept in Model.Departments)
+                    {
+                        <option value="@dept">@dept</option>
+                    }
+                </select>
+                <span asp-validation-for="Department" class="text-danger"></span>
             </div>
 
             <div class="mb-3 position-relative">
@@ -140,6 +152,21 @@
             icon.classList.toggle("fa-eye");
             icon.classList.toggle("fa-eye-slash");
         }
+
+        // Show/hide department dropdown based on role
+        document.addEventListener('DOMContentLoaded', function() {
+            var roleSelect = document.getElementById('roleSelect');
+            var departmentDiv = document.getElementById('departmentDiv');
+            function toggleDepartment() {
+                if (roleSelect.value === 'Doctor') {
+                    departmentDiv.style.display = '';
+                } else {
+                    departmentDiv.style.display = 'none';
+                }
+            }
+            roleSelect.addEventListener('change', toggleDepartment);
+            toggleDepartment(); // Initial call
+        });
     </script>
 </body>
 </html>

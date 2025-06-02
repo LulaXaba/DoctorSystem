@@ -8,6 +8,7 @@ namespace DoctorSystem.Models
         public string? InsuranceProvider { get; set; }
         public string? MedicalHistoryFilePath { get; set; }
         public string? Role { get; set; } 
+        public string? Department { get; set; } // For doctors
     }
 }
 //huggyuj.
