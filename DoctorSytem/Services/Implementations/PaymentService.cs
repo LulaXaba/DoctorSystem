@@ -19,6 +19,15 @@ namespace DoctorSystem.Services.Implementations
 
         public async Task<Payment> CreatePaymentAsync(CreatePaymentDto dto, string patientId)
         {
+            if (dto.AppointmentId.HasValue)
+            {
+                var appointmentExists = await _context.Appointments.AnyAsync(a => a.Id == dto.AppointmentId.Value);
+                if (!appointmentExists)
+                {
+                    throw new InvalidOperationException("The specified appointment does not exist.");
+                }
+            }
+
             var payment = new Payment
             {
                 PatientId = patientId,
@@ -72,6 +81,14 @@ namespace DoctorSystem.Services.Implementations
             return await _context.Payments
                 .Include(p => p.Appointment)
                 .FirstOrDefaultAsync(p => p.Id == paymentId);
+        }
+
+        public IEnumerable<Appointment> GetPatientAppointments(string patientId)
+        {
+            return _context.Appointments
+                .Where(a => a.PatientId == patientId)
+                .OrderByDescending(a => a.StartTime)
+                .ToList();
         }
     }
 } 

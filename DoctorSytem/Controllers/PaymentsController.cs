@@ -19,6 +19,9 @@ namespace DoctorSystem.Controllers
 
         public IActionResult Create()
         {
+            var patientId = User.FindFirstValue(System.Security.Claims.ClaimTypes.NameIdentifier);
+            var appointments = _paymentService.GetPatientAppointments(patientId);
+            ViewBag.Appointments = appointments;
             return View();
         }
 
@@ -27,10 +30,15 @@ namespace DoctorSystem.Controllers
         public async Task<IActionResult> Create(CreatePaymentDto dto)
         {
             if (!ModelState.IsValid)
+            {
+                var patientId = User.FindFirstValue(System.Security.Claims.ClaimTypes.NameIdentifier);
+                var appointments = _paymentService.GetPatientAppointments(patientId);
+                ViewBag.Appointments = appointments;
                 return View(dto);
+            }
 
-            var patientId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var payment = await _paymentService.CreatePaymentAsync(dto, patientId);
+            var patientIdPost = User.FindFirstValue(System.Security.Claims.ClaimTypes.NameIdentifier);
+            var payment = await _paymentService.CreatePaymentAsync(dto, patientIdPost);
 
             return RedirectToAction(nameof(MyPayments));
         }

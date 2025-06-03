@@ -34,8 +34,17 @@
                 </div>
 
                 <div class="form-group mb-3">
-                    <label asp-for="AppointmentId" class="control-label">Appointment ID (Optional)</label>
-                    <input asp-for="AppointmentId" class="form-control" />
+                    <label asp-for="AppointmentId" class="control-label">Appointment (Optional)</label>
+                    <select asp-for="AppointmentId" class="form-select">
+                        <option value="">-- Select Appointment --</option>
+                        @if (ViewBag.Appointments != null)
+                        {
+                            foreach (var appt in ViewBag.Appointments)
+                            {
+                                <option value="@appt.Id">@appt.StartTime.ToString("g") - @appt.Department</option>
+                            }
+                        }
+                    </select>
                     <span asp-validation-for="AppointmentId" class="text-danger"></span>
                 </div>
 

@@ -9,5 +9,6 @@ namespace DoctorSystem.Services.Interfaces
         Task<IEnumerable<Payment>> GetPatientPaymentsAsync(string patientId);
         Task UpdatePaymentStatusAsync(int paymentId, PaymentStatus status);
         Task<Payment?> GetPaymentByIdAsync(int paymentId);
+        IEnumerable<Appointment> GetPatientAppointments(string patientId);
     }
 } 
